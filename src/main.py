@@ -24,6 +24,7 @@ def pep(session):
     peps = (mid_div.find_all('tr'))
 
     statuses = []
+    log_statuses = []
 
     for pep in tqdm(peps):
         status_code = (find_tag(pep, 'abbr')).text[1:]
@@ -39,10 +40,14 @@ def pep(session):
         status = find_tag(soup, 'abbr').text
         statuses.append(status)
         if status not in exp_status:
+            log_statuses.append([pep_link, status, exp_status])
+
+    if len(log_statuses) >= 1:
+        for i in log_statuses:
             logging.info(
-                    f'Несовпадающие статусы: {pep_link}'
-                    f'Статус в карточке: {status}'
-                    f'Ожидаемые статусы: {exp_status}'
+                    f'Несовпадающие статусы: {i[0]} '
+                    f'Статус в карточке: {i[1]} '
+                    f'Ожидаемые статусы: {i[2]}'
             )
 
     count = Counter(statuses)
